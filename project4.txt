@@ -1,0 +1,54 @@
+﻿/* 1.  This query displays the number of Slytherin students there are*/
+SELECT COUNT(*) FROM hogwarts_students WHERE house = 'Slytherin';
+
+
+/* 2. This query displays the earliest start date that we have in the database */
+SELECT MIN(start) FROM hogwarts_students;
+
+
+/* 3. This query displays the students that have missing data */
+SELECT COUNT(*) from hogwarts_students WHERE house IS NULL OR start IS NULL OR finish IS NULL; 
+
+
+/* 4. This query displays the number DADA professors with the same length first and last name */
+SELECT COUNT(*) from hogwarts_dada WHERE length(first) = length(last);
+
+
+/* 5. This query displays the number of students in each house */
+SELECT house, COUNT(*) from hogwarts_students GROUP BY house ORDER BY COUNT(*) DESC; 
+
+
+/* 6. This query displays the houses with 20+ students */ 
+SELECT house, COUNT(*) from hogwarts_students  GROUP BY house HAVING COUNT(*) > 20; 
+
+
+/* 7. This query displays the avg. time spent at Hogwarts by time */ 
+SELECT house, avg(finish - start) FROM hogwarts_students WHERE start IS NOT NULL AND finish IS NOT NULL GROUP BY house ORDER BY avg; 
+
+
+/* 8. This query displays the families that have had 2 people attend Hogwarts */ 
+SELECT last FROM hogwarts_students GROUP BY last HAVING COUNT(last) = 2;
+
+
+/* 9. This query displays names and house and house color of DADA professors */
+SELECT hogwarts_students.first, hogwarts_students.last, hogwarts_students.house, hogwarts_houses.colors FROM hogwarts_dada, hogwarts_students, hogwarts_houses WHERE hogwarts_houses.house = hogwarts_students.house AND hogwarts_students.first = hogwarts_dada.first; 
+
+
+/* 10. This query displays the student with the earliest start date */
+SELECT first, last, start FROM hogwarts_students WHERE start = (SELECT min(start) from hogwarts_students); 
+
+
+/* 11. This query displays the student with the shortest name */
+SELECT first, last FROM hogwarts_students WHERE length(first) = (SELECT min(length(first)) FROM hogwarts_students) AND length(last) = (SELECT min(length(first)) FROM hogwarts_students);
+
+
+/* 12. Shows Gryffindor students that had Dolores Umbridge as their DADA professor */
+ELECT hogwarts_students.first, hogwarts_students.last FROM hogwarts_students, hogwarts_dada WHERE house = 'Gryffindor' AND hogwarts_dada.first = 'Dolores' AND hogwarts_students.start = hogwarts_dada.start; 
+
+
+/* 13. This query displays families that have had relatives attend Hogwarts */ 
+SELECT DISTINCT students.first, students.last FROM hogwarts_students AS students, hogwarts_students AS students1 WHERE students.first != students1.first AND students.last = students1.last ORDER BY students.last, students.first; 
+
+
+/* 14. This query displays the students by house that has Alastor Moody as their DADA professor */ 
+SELECT house, COUNT(*) FROM hogwarts_students, hogwarts_dada WHERE hogwarts_students.start = hogwarts_dada.start AND hogwarts_dada.first = 'Alastor' AND hogwarts_dada.last = 'Moody' GROUP BY house;
